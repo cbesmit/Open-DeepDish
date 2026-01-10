@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EstadoCalificacion {
+  ME_GUSTO
+  NO_ME_GUSTO
+  INDIFERENTE
+}
+
+model Persona {
+  id             String         @id @default(uuid())
+  nombre         String
+  edad           Int
+  sexo           String?
+  gustos         Json           @default("[]")
+  disgustos      Json           @default("[]")
+  activo         Boolean        @default(true)
+  createdAt      DateTime       @default(now()) @map("created_at")
+  calificaciones Calificacion[]
+
+  @@map("personas")
+}
+
+model RecetaGuardada {
+  id                String         @id @default(uuid())
+  titulo            String
+  descripcion       String         @db.Text
+  tipo_comida       String
+  nivel_saludable   Int
+  tiempo_preparacion String
+  contenido_full    Json
+  config_snapshot   Json
+  fecha_guardado    DateTime       @default(now())
+  deleted_at        DateTime?
+  calificaciones    Calificacion[]
+
+  @@index([titulo])
+  @@index([tipo_comida])
+  @@index([nivel_saludable])
+  @@index([fecha_guardado])
+  @@map("recetas_guardadas")
+}
+
+model Calificacion {
+  id        String             @id @default(uuid())
+  personaId String             @map("persona_id")
+  recetaId  String             @map("receta_id")
+  valoracion EstadoCalificacion
+  updatedAt DateTime           @updatedAt @map("updated_at")
+
+  persona Persona        @relation(fields: [personaId], references: [id])
+  receta  RecetaGuardada @relation(fields: [recetaId], references: [id])
+
+  @@map("calificaciones")
+}
+
+model IngredienteLocal {
+  id     Int     @id @default(autoincrement())
+  nombre String
+  activo Boolean @default(true)
+
+  @@map("ingredientes_locales")
+}

@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # --- Base de Datos ---
+  db:
+    image: postgres:15-alpine
+    container_name: sacc_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sacc-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # No exponemos puerto 5432 al host por seguridad
+
+  # --- Backend (API & IA Controller) ---
+  backend:
+    build: ./backend
+    container_name: sacc_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASS}@db:5432/${DB_NAME}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      APP_USER: ${APP_USER}
+      APP_PASSWORD: ${APP_PASSWORD}
+    networks:
+      - sacc-network
+    # Healthcheck opcional para asegurar que DB está lista antes de arrancar
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h db -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --- Frontend (Web Server & Gateway) ---
+  frontend:
+    build: ./frontend
+    container_name: sacc_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "${APP_PORT}:80" # El ÚNICO puerto expuesto (ej. 3000 -> 80)
+    networks:
+      - sacc-network
+
+networks:
+  sacc-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
