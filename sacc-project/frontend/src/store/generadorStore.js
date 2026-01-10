@@ -9,7 +9,8 @@ const DEFAULT_CONFIG = {
   ingredientes_extra: '',
   usar_tiendas: true,
   antojo: '',
-  nivel_agrado: 'MAYORIA' // CONSENSO, MAYORIA, EXPERIMENTAL
+  nivel_agrado: 'MAYORIA', // CONSENSO, MAYORIA, EXPERIMENTAL
+  tipo_cocina: 'Mexicana' // Default Cuisine
 };
 
 const useGeneradorStore = create((set, get) => ({
@@ -34,9 +35,20 @@ const useGeneradorStore = create((set, get) => ({
   generar: async () => {
     set({ status: 'LOADING', error: null });
     try {
-      const payload = get().config;
-      // Convertir nivel_saludable a string si el backend lo requiere o mantener número
-      // El backend espera: personas_ids, nivel_saludable (num), etc.
+      const config = get().config;
+      
+      // Mapear claves del frontend a lo que espera el backend (según generadorSchema en controller)
+      const payload = {
+          personas_ids: config.personas_ids,
+          tipo_comida: config.tipo_comida,
+          nivel_saludable: config.nivel_saludable,
+          nivel_agrado: config.nivel_agrado,
+          tiempo_prep: config.tiempo_prep,
+          ingredientes_casa: config.ingredientes_extra, // Map frontend 'ingredientes_extra' to backend 'ingredientes_casa'
+          usar_ingredientes_cercanos: config.usar_tiendas, // Map frontend 'usar_tiendas' to backend 'usar_ingredientes_cercanos'
+          antojo_extra: config.antojo, // Map frontend 'antojo' to backend 'antojo_extra'
+          tipo_cocina: config.tipo_cocina
+      };
       
       const response = await generadorService.generarRecetas(payload);
       

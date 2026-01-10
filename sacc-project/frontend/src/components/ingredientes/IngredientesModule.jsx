@@ -3,7 +3,7 @@ import useIngredientesStore from '../../store/ingredientesStore';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import Spinner from '../ui/Spinner';
-import Badge from '../ui/Badge';
+import Switch from '../ui/Switch'; // Import Switch
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { cn } from '../../utils/cn';
 
@@ -62,19 +62,14 @@ export default function IngredientesModule() {
             <div className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
                 {ingredientes.map(ingrediente => (
                     <div key={ingrediente.id} className="flex items-center justify-between px-6 py-3 hover:bg-gray-50 transition-colors group">
-                        <div className="flex items-center gap-3">
-                             <input 
-                                type="checkbox"
-                                checked={ingrediente.disponible}
+                        <div className="flex items-center gap-4">
+                             <Switch 
+                                checked={ingrediente.activo} // Usar 'activo' que es el campo de DB (Prisma model: activo Boolean)
                                 onChange={() => toggleIngrediente(ingrediente.id)}
-                                className="h-5 w-5 rounded text-brand-600 focus:ring-brand-500 border-gray-300 cursor-pointer"
                              />
-                             <span className={cn("text-gray-700 font-medium", !ingrediente.disponible && "text-gray-400 line-through")}>
+                             <span className={cn("text-gray-700 font-medium", !ingrediente.activo && "text-gray-400")}>
                                 {ingrediente.nombre}
                              </span>
-                             {!ingrediente.disponible && (
-                                 <Badge variant="outline" className="text-xs">Agotado</Badge>
-                             )}
                         </div>
                         <button 
                             onClick={() => deleteIngrediente(ingrediente.id)}

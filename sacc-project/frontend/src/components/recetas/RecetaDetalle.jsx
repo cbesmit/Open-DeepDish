@@ -43,13 +43,13 @@ export default function RecetaDetalle({ receta, modo = 'lectura' }) {
     try {
         // Preparar payload para backend
         const payload = {
-            nombre: receta.nombre,
+            titulo: receta.titulo || receta.nombre, // Backend espera titulo
             descripcion: receta.descripcion,
+            tipo_comida: config.tipo_comida || 'Comida', // Usar config si no viene en receta
+            tiempo_preparacion: receta.tiempo_estimado || config.tiempo_prep,
+            nivel_saludable: receta.nivel_saludable_calculado || config.nivel_saludable || 3,
             contenido_full: detalles,
             config_snapshot: config, // config del store generador
-            tiempo_estimado: receta.tiempo_estimado,
-            calorias: receta.calorias,
-            tipo_cocina: receta.tipo_cocina
         };
         
         const nueva = await guardarGenerada(payload);

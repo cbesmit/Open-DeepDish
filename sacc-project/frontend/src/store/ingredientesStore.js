@@ -31,14 +31,14 @@ const useIngredientesStore = create((set, get) => ({
     const previousIngredientes = get().ingredientes;
     set({
         ingredientes: previousIngredientes.map(i =>
-            i.id === id ? { ...i, disponible: !i.disponible } : i
+            i.id === id ? { ...i, activo: !i.activo } : i
         )
     });
 
     try {
       await ingredientesService.toggle(id);
     } catch (error) {
-      set({ ingredients: previousIngredientes, error: 'Error al actualizar ingrediente' });
+      set({ ingredientes: previousIngredientes, error: 'Error al actualizar ingrediente' });
     }
   },
 
