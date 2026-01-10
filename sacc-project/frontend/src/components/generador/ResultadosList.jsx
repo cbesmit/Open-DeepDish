@@ -6,18 +6,32 @@ import { Card, CardTitle, CardContent, CardFooter } from '../ui/Card';
 import { ArrowPathIcon, ChevronRightIcon, ClockIcon, FireIcon } from '@heroicons/react/24/outline';
 
 export default function ResultadosList({ onSelectReceta }) {
-  const { recetasGeneradas, limpiarResultados } = useGeneradorStore();
+  const { recetasGeneradas, limpiarResultados, generar, resetConfig, status } = useGeneradorStore();
+
+  const handleRegenerar = () => {
+      generar(true); // Enviar historial
+  };
 
   return (
     <div className="space-y-6 animate-fadeIn">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
             <h2 className="text-2xl font-bold text-gray-900">¡El Chef ha hablado!</h2>
-            <p className="text-gray-500">Aquí tienes 5 opciones basadas en lo que tienes.</p>
+            <p className="text-gray-500">Aquí tienes 8 opciones basadas en tu perfil.</p>
         </div>
-        <Button variant="outline" onClick={limpiarResultados} icon={ArrowPathIcon}>
-            Volver a Generar
-        </Button>
+        <div className="flex gap-2">
+            <Button variant="outline" onClick={resetConfig} icon={ArrowPathIcon}>
+                Reiniciar
+            </Button>
+            <Button 
+                variant="primary" 
+                onClick={handleRegenerar} 
+                icon={ArrowPathIcon}
+                isLoading={status === 'LOADING'}
+            >
+                Volver a Generar
+            </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

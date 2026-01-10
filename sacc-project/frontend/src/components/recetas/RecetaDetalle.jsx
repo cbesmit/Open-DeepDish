@@ -76,10 +76,10 @@ export default function RecetaDetalle({ receta, modo = 'lectura' }) {
       <div className="mb-8">
          <div className="flex flex-wrap gap-2 mb-3">
              <Badge className="bg-orange-100 text-orange-800">{receta.tipo_cocina || 'General'}</Badge>
-             <Badge variant="outline" className="flex items-center gap-1"><ClockIcon className="h-3 w-3"/> {receta.tiempo_estimado}</Badge>
-             <Badge variant="outline" className="flex items-center gap-1"><FireIcon className="h-3 w-3"/> {receta.calorias} kcal</Badge>
+             <Badge variant="outline" className="flex items-center gap-1"><ClockIcon className="h-3 w-3"/> {receta.tiempo_estimado || config.tiempo_prep}</Badge>
+             <Badge variant="outline" className="flex items-center gap-1"><FireIcon className="h-3 w-3"/> Salud: {receta.nivel_saludable_calculado || config.nivel_saludable}/5</Badge>
          </div>
-         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">{receta.nombre}</h1>
+         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">{receta.titulo || receta.nombre}</h1>
          <p className="text-lg text-gray-600 leading-relaxed">{receta.descripcion}</p>
       </div>
 

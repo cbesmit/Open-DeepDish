@@ -16,6 +16,7 @@ const DEFAULT_CONFIG = {
 const useGeneradorStore = create((set, get) => ({
   config: { ...DEFAULT_CONFIG },
   recetasGeneradas: [],
+  historialTitulos: [], // Guardar títulos ya generados para evitar repeticiones
   status: 'IDLE', // IDLE, LOADING, SUCCESS, ERROR
   error: null,
 
@@ -29,33 +30,46 @@ const useGeneradorStore = create((set, get) => ({
   },
 
   resetConfig: () => {
-    set({ config: { ...DEFAULT_CONFIG }, status: 'IDLE', error: null, recetasGeneradas: [] });
+    set({ 
+        config: { ...DEFAULT_CONFIG }, 
+        status: 'IDLE', 
+        error: null, 
+        recetasGeneradas: [],
+        historialTitulos: []
+    });
   },
 
-  generar: async () => {
+  generar: async (esReintento = false) => {
     set({ status: 'LOADING', error: null });
     try {
       const config = get().config;
+      const historial = get().historialTitulos;
       
-      // Mapear claves del frontend a lo que espera el backend (según generadorSchema en controller)
       const payload = {
           personas_ids: config.personas_ids,
           tipo_comida: config.tipo_comida,
           nivel_saludable: config.nivel_saludable,
           nivel_agrado: config.nivel_agrado,
           tiempo_prep: config.tiempo_prep,
-          ingredientes_casa: config.ingredientes_extra, // Map frontend 'ingredientes_extra' to backend 'ingredientes_casa'
-          usar_ingredientes_cercanos: config.usar_tiendas, // Map frontend 'usar_tiendas' to backend 'usar_ingredientes_cercanos'
-          antojo_extra: config.antojo, // Map frontend 'antojo' to backend 'antojo_extra'
-          tipo_cocina: config.tipo_cocina
+          ingredientes_casa: config.ingredientes_extra,
+          usar_ingredientes_cercanos: config.usar_tiendas,
+          antojo_extra: config.antojo,
+          tipo_cocina: config.tipo_cocina,
+          // Mandamos el historial si es un reintento/regeneración
+          historial_recetas: esReintento ? historial : []
       };
       
       const response = await generadorService.generarRecetas(payload);
+      const nuevasRecetas = response.recetas_generadas || response.recetas || [];
       
-      // La respuesta del backend devuelve { "recetas_generadas": [...] }
-      const recetas = response.recetas_generadas || response.recetas || [];
-      
-      set({ recetasGeneradas: recetas, status: 'SUCCESS' });
+      // Actualizar historial con los nuevos títulos
+      const nuevosTitulos = nuevasRecetas.map(r => `${r.titulo}: ${r.descripcion}`);
+
+      set((state) => ({ 
+        recetasGeneradas: nuevasRecetas, 
+        historialTitulos: [...state.historialTitulos, ...nuevosTitulos],
+        status: 'SUCCESS' 
+      }));
     } catch (error) {
       console.error("Error generando recetas:", error);
       set({ 
@@ -66,6 +80,7 @@ const useGeneradorStore = create((set, get) => ({
   },
 
   limpiarResultados: () => {
+    // Solo limpia resultados para volver al form, pero mantiene historial si se desea
     set({ status: 'IDLE', recetasGeneradas: [], error: null });
   }
 }));

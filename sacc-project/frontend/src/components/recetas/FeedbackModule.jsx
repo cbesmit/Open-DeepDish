@@ -31,10 +31,10 @@ export default function FeedbackModule({ recetaId, calificacionesIniciales = [],
     setIsSaving(true);
     try {
         const payload = Object.entries(calificaciones)
-            .filter(([_, val]) => val !== null) // Solo enviar votos explícitos (opcional)
+            .filter(([_, val]) => val !== null)
             .map(([personaId, valoracion]) => ({
-                persona_id: parseInt(personaId),
-                valoracion
+                persona_id: personaId, // Mantener como String (UUID)
+                valoracion: valoracion === true ? 'ME_GUSTO' : (valoracion === false ? 'NO_ME_GUSTO' : 'INDIFERENTE')
             }));
         
         await enviarCalificacion(recetaId, payload);

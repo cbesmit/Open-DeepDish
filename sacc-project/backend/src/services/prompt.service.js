@@ -64,7 +64,10 @@ REGLAS CRÍTICAS:
     
 2. Respeta estrictamente las alergias y disgustos de los comensales según el "Objetivo de Agrado".
     
-3. Prioriza el uso de 'Ingredientes Disponibles en Casa'. Sugiere compras del 'Catálogo Cercano' solo si es estrictamente necesario para completar un plato viable.`;
+3. Prioriza el uso de 'Ingredientes Disponibles en Casa'. Sugiere compras del 'Catálogo Cercano' solo si es estrictamente necesario para completar un plato viable.
+
+4. RESTRICCIÓN NEGATIVA: NO generes ninguna de las siguientes recetas que ya han sido propuestas anteriormente:
+${(configuracion.historial_recetas || []).map(r => `- ${r}`).join('\n')}`;
 
   // 3. Construir Bloque "Context Injection"
   

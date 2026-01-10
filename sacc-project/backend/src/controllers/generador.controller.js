@@ -12,7 +12,8 @@ const generadorSchema = z.object({
   ingredientes_casa: z.string().optional(),
   usar_ingredientes_cercanos: z.boolean().optional(),
   antojo_extra: z.string().optional(),
-  tipo_cocina: z.string().optional()
+  tipo_cocina: z.string().optional(),
+  historial_recetas: z.array(z.string()).optional()
 });
 
 const generarRecetas = async (req, res) => {
