@@ -57,7 +57,7 @@ export default function RecetasPage() {
                           <Link key={receta.id} to={`/recetas/${receta.id}`}>
                               <Card className="h-full hover:shadow-md transition-shadow cursor-pointer flex flex-col">
                                   <CardContent className="flex-1 pb-2">
-                                      <CardTitle className="mb-2 line-clamp-1">{receta.nombre}</CardTitle>
+                                      <CardTitle className="mb-2 line-clamp-1">{receta.titulo}</CardTitle>
                                       <p className="text-sm text-gray-500 line-clamp-2 mb-3">{receta.descripcion}</p>
                                       <div className="flex flex-wrap gap-2">
                                           <Badge className="bg-gray-100 text-gray-600 text-xs flex items-center gap-1">

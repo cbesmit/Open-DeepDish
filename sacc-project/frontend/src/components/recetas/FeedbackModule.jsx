@@ -7,15 +7,34 @@ import { cn } from '../../utils/cn';
 
 export default function FeedbackModule({ recetaId, calificacionesIniciales = [], personas = [] }) {
   const { enviarCalificacion } = useRecetasStore();
+  
+  // Función auxiliar para mapear valores
+  const mapIncomingRating = (val) => {
+      if (val === 'ME_GUSTO') return true;
+      if (val === 'NO_ME_GUSTO') return false;
+      return null; // INDIFERENTE o null
+  };
+
   const [calificaciones, setCalificaciones] = useState(() => {
-    // Inicializar estado local con calificaciones existentes o default (null)
     const initialMap = {};
     personas.forEach(p => {
         const existing = calificacionesIniciales.find(c => c.persona_id === p.id);
-        initialMap[p.id] = existing ? existing.valoracion : null; // true, false, or null
+        initialMap[p.id] = existing ? mapIncomingRating(existing.valoracion) : null;
     });
     return initialMap;
   });
+
+  // Actualizar si cambian las calificaciones iniciales (ej: al re-fetch)
+  React.useEffect(() => {
+    const newMap = {};
+    personas.forEach(p => {
+        const existing = calificacionesIniciales.find(c => c.persona_id === p.id);
+        newMap[p.id] = existing ? mapIncomingRating(existing.valoracion) : null;
+    });
+    setCalificaciones(newMap);
+    setHasChanges(false);
+  }, [calificacionesIniciales, personas]);
+
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 

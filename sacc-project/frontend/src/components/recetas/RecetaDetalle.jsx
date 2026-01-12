@@ -53,7 +53,11 @@ export default function RecetaDetalle({ receta, modo = 'lectura' }) {
         };
         
         const nueva = await guardarGenerada(payload);
-        navigate(`/recetas/${nueva.id}`, { replace: true });
+        // Navegar con estado para saber que venimos del generador
+        navigate(`/recetas/${nueva.id}`, { 
+            replace: true, 
+            state: { fromGenerator: true } 
+        });
     } catch (e) {
         console.error(e);
         // Error manejado en store

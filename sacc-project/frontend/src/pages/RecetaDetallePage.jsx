@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import useRecetasStore from '../store/recetasStore';
 import RecetaDetalle from '../components/recetas/RecetaDetalle';
 import Spinner from '../components/ui/Spinner';
@@ -9,13 +9,24 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 export default function RecetaDetallePage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { recetaActiva, fetchRecetaDetalle, isLoading, error } = useRecetasStore();
+
+  const fromGenerator = location.state?.fromGenerator;
 
   useEffect(() => {
     if (id) {
       fetchRecetaDetalle(id);
     }
   }, [id, fetchRecetaDetalle]);
+
+  const handleBack = () => {
+    if (fromGenerator) {
+        navigate('/generador');
+    } else {
+        navigate('/recetas');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -38,8 +49,9 @@ export default function RecetaDetallePage() {
 
   return (
     <div className="space-y-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-900 pl-0">
-            <ArrowLeftIcon className="h-4 w-4 mr-1" /> Volver
+        <Button variant="ghost" size="sm" onClick={handleBack} className="text-gray-500 hover:text-gray-900 pl-0">
+            <ArrowLeftIcon className="h-4 w-4 mr-1" /> 
+            {fromGenerator ? 'Volver a resultados de IA' : 'Volver al recetario'}
         </Button>
         <RecetaDetalle receta={recetaActiva} modo="lectura" />
     </div>

@@ -87,9 +87,11 @@ const useRecetasStore = create((set, get) => ({
 
   enviarCalificacion: async (id, calificaciones) => {
     try {
-      const updatedReceta = await recetasService.calificarReceta(id, calificaciones);
-      set({ recetaActiva: updatedReceta }); // Actualiza la vista actual
-      return updatedReceta;
+      await recetasService.calificarReceta(id, calificaciones);
+      // Re-fetch para asegurar data completa y evitar estados vacíos
+      const updated = await recetasService.getRecetaById(id);
+      set({ recetaActiva: updated });
+      return updated;
     } catch (error) {
       console.error('Error al calificar:', error);
       throw error;
