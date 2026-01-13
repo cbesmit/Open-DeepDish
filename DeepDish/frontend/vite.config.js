@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true, 
+    allowedHosts: ['comida.besmit.com'],
     proxy: {
       '/api': {
         target: 'http://backend:4000',
