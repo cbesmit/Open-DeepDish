@@ -4,7 +4,7 @@
 
 A diferencia de los generadores de recetas genéricos, DeepDish considera los **gustos específicos (qué les gusta y qué no)** de cada miembro de la familia, los ingredientes disponibles en tu **despensa** y tus restricciones actuales (tiempo, salud, tipo de cocina).
 
-Utilizando **DeepSeek Reasoner (R1)**, genera recetas que buscan el "Consenso Total" — minimizando las quejas y maximizando la satisfacción de todos los comensales.
+Utilizando **OpenAI GPT-4o mini**, genera recetas que buscan el "Consenso Total" — minimizando las quejas y maximizando la satisfacción de todos los comensales.
 
 ## 🚀 Características
 
@@ -25,13 +25,13 @@ Utilizando **DeepSeek Reasoner (R1)**, genera recetas que buscan el "Consenso To
 - **Frontend:** React (Vite), Tailwind CSS, Zustand (Gestión de estado), Heroicons.
 - **Backend:** Node.js, Express.js.
 - **Base de Datos:** PostgreSQL (vía Prisma ORM).
-- **IA:** DeepSeek API (Modelo Reasoner).
+- **IA:** OpenAI API (Modelo GPT-4o mini).
 - **Infraestructura:** Docker & Docker Compose.
 
 ## 📦 Prerrequisitos
 
 - Docker y Docker Compose instalados.
-- Una [API Key de DeepSeek](https://platform.deepseek.com/).
+- Una [API Key de OpenAI](https://platform.openai.com/).
 
 ## ⚡ Inicio Rápido
 
@@ -55,8 +55,8 @@ Utilizando **DeepSeek Reasoner (R1)**, genera recetas que buscan el "Consenso To
     DB_NAME=sacc_db
 
     # Servicio de IA
-    DEEPSEEK_API_KEY=sk-tu-api-key-aqui
-    DEEPSEEK_MODEL=deepseek-reasoner
+    OPENAI_API_KEY=sk-tu-api-key-aqui
+    OPENAI_MODEL=gpt-4o-mini
     ```
 
 3.  **Lanzar con Docker:**

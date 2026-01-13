@@ -2,7 +2,7 @@
 
 ## 1.1 Propósito del Documento
 
-El propósito de este documento es definir detalladamente los requerimientos funcionales, no funcionales y la arquitectura técnica para el desarrollo del **Sistema de Asistencia Culinaria Contextual (SACC)**. Este proyecto tiene como objetivo resolver la problemática diaria de la planificación de comidas en un entorno familiar, utilizando Inteligencia Artificial Generativa (DeepSeek Reasoner) para crear menús hiper-personalizados que consideren restricciones dietéticas, inventario actual, gustos históricos y dinámicas sociales del hogar.
+El propósito de este documento es definir detalladamente los requerimientos funcionales, no funcionales y la arquitectura técnica para el desarrollo del **Sistema de Asistencia Culinaria Contextual (SACC)**. Este proyecto tiene como objetivo resolver la problemática diaria de la planificación de comidas en un entorno familiar, utilizando Inteligencia Artificial Generativa (OpenAI GPT-4o mini) para crear menús hiper-personalizados que consideren restricciones dietéticas, inventario actual, gustos históricos y dinámicas sociales del hogar.
 
 ## 1.2 Visión del Producto
 
@@ -27,7 +27,7 @@ Desarrollar una aplicación "Full Stack" desplegable mediante Docker Compose que
     
 2. **Optimización de Inventario:** Priorizar el uso de ingredientes existentes (anti-desperdicio) e identificar ingredientes faltantes accesibles localmente.
     
-3. **Generación Inteligente:** Utilizar DeepSeek Reasoner para procesar lógica difusa (ej. "algo rápido y saludable para 3 personas, pero que le guste al niño que odia la cebolla") y devolver resultados estructurados (JSON).
+3. **Generación Inteligente:** Utilizar OpenAI GPT-4o mini para procesar lógica difusa (ej. "algo rápido y saludable para 3 personas, pero que le guste al niño que odia la cebolla") y devolver resultados estructurados (JSON).
     
 4. **Gestión de Conocimiento (Feedback Loop):** Implementar un sistema de retroalimentación donde el usuario califica el éxito de una receta, alimentando el contexto de futuras generaciones.
     
@@ -44,7 +44,7 @@ Desarrollar una aplicación "Full Stack" desplegable mediante Docker Compose que
     
 - **Motor de Filtros Avanzados:** Búsqueda por coincidencia de texto (LIKE), rangos de fechas, niveles de salud y etiquetas de tiempo de preparación.
     
-- **Integración IA:** Comunicación vía API con DeepSeek, incluyendo ingeniería de prompts dinámica basada en el historial de base de datos.
+- **Integración IA:** Comunicación vía API con OpenAI, incluyendo ingeniería de prompts dinámica basada en el historial de base de datos.
     
 - **Persistencia:** Almacenamiento de recetas generadas, logs de auditoría de gustos por persona y configuraciones de generación.
     
@@ -73,9 +73,9 @@ Desarrollar una aplicación "Full Stack" desplegable mediante Docker Compose que
 
 - **Contenerización:** La aplicación debe funcionar al 100% dentro de un entorno Docker Compose.
     
-- **Conectividad:** El servidor requiere acceso a internet para consumir la API de DeepSeek.
+- **Conectividad:** El servidor requiere acceso a internet para consumir la API de OpenAI.
     
-- **Modelo de IA:** Se priorizará el modelo `deepseek-reasoner` por su capacidad de cadena de pensamiento (CoT) para resolver conflictos de gustos entre múltiples personas.
+- **Modelo de IA:** Se utilizará el modelo `gpt-4o-mini` por su excelente balance entre capacidad de razonamiento, costo y eficiencia para resolver conflictos de gustos entre múltiples personas.
     
 - **Base de Datos:** PostgreSQL como fuente única de verdad para datos estructurados y JSONB para metadatos flexibles de recetas.
     

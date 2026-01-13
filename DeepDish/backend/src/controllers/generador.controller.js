@@ -1,5 +1,5 @@
 const promptService = require('../services/prompt.service');
-const deepseekService = require('../services/deepseek.service');
+const openaiService = require('../services/openai.service');
 const { z } = require('zod');
 
 // Schema básico de validación para el generador
@@ -26,13 +26,13 @@ const generarRecetas = async (req, res) => {
     console.log('[Generador] Construyendo prompt para', personas_ids.length, 'personas...');
     const prompt = await promptService.buildPrompt(configuracion, personas_ids);
 
-    // 3. Llamar a DeepSeek AI
-    console.log('[Generador] Enviando petición a DeepSeek...');
-    const recetasGeneradas = await deepseekService.callDeepSeekAPI(prompt);
+    // 3. Llamar a OpenAI
+    console.log('[Generador] Enviando petición a OpenAI...');
+    const recetasGeneradas = await openaiService.callOpenAIAPI(prompt);
 
     // 4. Retornar respuesta
     // La spec dice que devolvemos: { "recetas_generadas": [...] }
-    // El output de deepseek tiene formato { "recetas": [...] } según el prompt.
+    // El output de openai tiene formato { "recetas": [...] } según el prompt.
     // Mapeamos para cumplir la spec si es necesario, o devolvemos directo.
     // Spec 6.4.1 dice response: { "recetas_generadas": [ ... ] }
     
@@ -60,7 +60,7 @@ const generarRecetas = async (req, res) => {
       });
     }
 
-    if (error.message.includes('DEEPSEEK_API_KEY') || error.message.includes('Timeout') || error.message.includes('503')) {
+    if (error.message.includes('OPENAI_API_KEY') || error.message.includes('Timeout') || error.message.includes('503')) {
       return res.status(503).json({
         error: true,
         message: 'El Chef IA no está disponible en este momento. Intenta de nuevo.',

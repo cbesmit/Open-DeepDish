@@ -7,12 +7,12 @@ DeepDish es una aplicación para la generación y gestión de recetas de cocina,
 - **Frontend:** React, Vite, Tailwind CSS, Zustand
 - **Backend:** Node.js, Express, Prisma ORM
 - **Base de Datos:** PostgreSQL
-- **IA:** DeepSeek API
+- **IA:** OpenAI API
 
 ## Requisitos Previos
 
 - Docker y Docker Compose instalados en tu sistema.
-- Una API Key de DeepSeek (para la generación de recetas).
+- Una API Key de OpenAI (para la generación de recetas).
 
 ## Configuración
 
@@ -32,7 +32,7 @@ DeepDish es una aplicación para la generación y gestión de recetas de cocina,
     DB_NAME=deepdish_db
 
     # Configuración del Backend
-    DEEPSEEK_API_KEY=tu_api_key_de_deepseek
+    OPENAI_API_KEY=tu_api_key_de_openai
 
     # Configuración del Frontend
     APP_PORT=3000

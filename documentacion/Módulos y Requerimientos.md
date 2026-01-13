@@ -117,7 +117,7 @@ Al hacer clic en "Generar":
     
 2. Construye un Prompt complejo (detallado en Sección 5).
     
-3. Envía solicitud a **DeepSeek Reasoner**.
+3. Envía solicitud a **OpenAI GPT-4o mini**.
     
 4. Recibe y valida que la respuesta sea un JSON válido.
     

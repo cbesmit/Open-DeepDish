@@ -6,7 +6,7 @@ Esta sección define los atributos de calidad del sistema y las guías de diseñ
 
 ### 7.1.1 Manejo de Latencia de IA (Critical)
 
-La generación de recetas vía DeepSeek Reasoner es un proceso computacionalmente costoso que puede tardar entre **10 a 60 segundos**.
+La generación de recetas vía OpenAI GPT-4o mini es un proceso computacionalmente costoso que puede tardar entre **10 a 60 segundos**.
 
 - **Requerimiento:** El sistema no debe bloquearse ni parecer "congelado" durante este tiempo.
     
@@ -31,7 +31,7 @@ La generación de recetas vía DeepSeek Reasoner es un proceso computacionalment
 
 ### 7.2.2 Manejo de Errores de API Externa
 
-- Si DeepSeek falla o retorna un JSON corrupto, el sistema debe tener un mecanismo de **Reintento Automático (Retry)** en el Backend (máximo 1 intento) antes de notificar al usuario.
+- Si OpenAI falla o retorna un JSON corrupto, el sistema debe tener un mecanismo de **Reintento Automático (Retry)** en el Backend (máximo 1 intento) antes de notificar al usuario.
     
 - Si el error persiste, mostrar un mensaje amigable: _"El Chef IA no está disponible en este momento. Intenta usar los filtros para buscar una receta guardada."_
     

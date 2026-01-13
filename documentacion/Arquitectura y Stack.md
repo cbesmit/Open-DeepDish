@@ -20,7 +20,7 @@ graph TD
     User[Usuario / Navegador] -- Puerto 80/3000 --> Frontend[Contenedor: ReactJS]
     Frontend -- Red Interna Docker --> Backend[Contenedor: Node.js API]
     Backend -- Red Interna Docker --> DB[(Contenedor: PostgreSQL)]
-    Backend -- HTTPS (Internet) --> DeepSeek[API Externa: DeepSeek Reasoner]
+    Backend -- HTTPS (Internet) --> OpenAI[API Externa: GPT-4o mini]
 ```
 
 ## 2.2 Stack Tecnológico Seleccionado
@@ -60,9 +60,9 @@ graph TD
 
 ### 2.2.4 Inteligencia Artificial
 
-- **Proveedor:** DeepSeek API.
+- **Proveedor:** OpenAI API.
     
-- **Modelo:** `deepseek-reasoner`.
+- **Modelo:** `gpt-4o-mini`.
     
 - **Función:** Generación de contenido creativo basado en lógica compleja (Chain of Thought) y restricciones estrictas.
     
@@ -87,7 +87,7 @@ El archivo `docker-compose.yml` definirá la infraestructura completa. Se utiliz
         
     - **Dependencias:** Espera a que `db` esté saludable (`depends_on` con `condition: service_healthy`).
         
-    - **Variables de Entorno:** Inyectadas desde archivo `.env` (Credenciales DB, API Key DeepSeek, Credenciales App).
+    - **Variables de Entorno:** Inyectadas desde archivo `.env` (Credenciales DB, API Key OpenAI, Credenciales App).
         
     - **Puertos:** No expuestos al host (solo accesible por `frontend` en puerto interno, ej. 4000).
         
@@ -133,8 +133,8 @@ DB_PASS=postgres_password
 DB_NAME=sacc_db
 
 # Inteligencia Artificial
-DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxxxxxx
-DEEPSEEK_MODEL=deepseek-reasoner
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxx
+OPENAI_MODEL=gpt-4o-mini
 ```
 
 ## 2.5 Requerimientos de Infraestructura

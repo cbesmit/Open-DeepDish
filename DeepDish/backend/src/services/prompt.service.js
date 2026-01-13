@@ -119,9 +119,7 @@ USA EXACTAMENTE EL SIGUIENTE FORMATO DE EJEMPLO:
 `;
 
   // Concatenar todo en el mensaje final
-  // Nota: Al usar modelos de razonamiento como deepseek-reasoner, a veces es mejor poner todo en el user prompt si el system prompt no es soportado separadamente,
-  // pero la instrucción dice "Construir Prompt". Lo uniremos todo en un solo string para enviarlo como 'user' message en deepseek.service.js, o separar 'system' si se desea.
-  // En deepseek.service.js estamos enviando un solo mensaje 'user'. Así que aquí concatenamos todo.
+  // La instrucción dice "Construir Prompt". Lo uniremos todo en un solo string para enviarlo como 'user' message en openai.service.js.
   
   const finalPrompt = `
 ${systemPrompt}

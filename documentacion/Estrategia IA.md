@@ -1,12 +1,12 @@
-# 5. Estrategia de Integración con IA (DeepSeek)
+# 5. Estrategia de Integración con IA (OpenAI)
 
-Esta sección detalla la ingeniería de prompts, el manejo de contexto y el flujo técnico para comunicar el Backend (Node.js) con la API de DeepSeek (`deepseek-reasoner`), garantizando respuestas estructuradas y útiles.
+Esta sección detalla la ingeniería de prompts, el manejo de contexto y el flujo técnico para comunicar el Backend (Node.js) con la API de OpenAI (`gpt-4o-mini`), garantizando respuestas estructuradas y útiles.
 
 ## 5.1 Selección del Modelo
 
-Se utilizará el modelo **DeepSeek Reasoner** (modelo de razonamiento).
+Se utilizará el modelo **GPT-4o mini**.
 
-- **Justificación:** A diferencia de modelos de chat estándar, los modelos de razonamiento (Chain of Thought) son superiores resolviendo problemas de satisfacción de restricciones múltiples (Constraint Satisfaction Problems).
+- **Justificación:** GPT-4o mini ofrece una capacidad de razonamiento avanzada y un manejo eficiente del contexto, ideal para resolver problemas de satisfacción de restricciones múltiples (Constraint Satisfaction Problems) con baja latencia y costo.
     
 - **Caso de Uso:** El sistema debe balancear variables contradictorias (ej. "Usuario A odia la cebolla", "Usuario B ama la cebolla", "Solo hay cebollas en la alacena") y deducir una solución culinaria creativa (ej. "Usar cebolla entera para dar sabor al caldo y retirarla antes de servir").
     
@@ -111,9 +111,9 @@ El servicio de Node.js ejecutará la siguiente lógica:
 
 1. **Construcción:** Recopila datos de DB y arma el string del prompt.
     
-2. **Llamada:** `POST https://api.deepseek.com/v1/chat/completions`
+2. **Llamada:** `POST https://api.openai.com/v1/chat/completions`
     
-    - `model`: `deepseek-reasoner`
+    - `model`: `gpt-4o-mini`
         
     - `temperature`: `0.7` (Creatividad balanceada).
         
@@ -134,6 +134,6 @@ El servicio de Node.js ejecutará la siguiente lógica:
 
 ## 5.5 Manejo de Errores
 
-- **DeepSeek API Down/Timeout:** Retornar error 503 al Frontend ("El Chef está pensando demasiado, intenta de nuevo").
+- **OpenAI API Down/Timeout:** Retornar error 503 al Frontend ("El Chef está pensando demasiado, intenta de nuevo").
     
 - **Alucinaciones (Hallucinations):** Si la IA inventa ingredientes que no están en la lista "En Casa" ni en "Tienda Cercana", se marcarán visualmente en el UI como "No identificados/Comprar".

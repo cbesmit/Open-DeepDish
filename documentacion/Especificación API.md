@@ -144,7 +144,7 @@ Endpoints simplificados para el catálogo local.
 
 ### 6.4.1 Generar Nuevas Recetas
 
-El endpoint principal. Orquesta la llamada a DeepSeek. Este proceso puede tardar entre 10-30 segundos.
+El endpoint principal. Orquesta la llamada a OpenAI. Este proceso puede tardar entre 10-30 segundos.
 
 - **Método:** `POST`
     

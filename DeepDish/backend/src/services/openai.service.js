@@ -1,26 +1,49 @@
 const axios = require('axios');
 
-const callDeepSeekAPI = async (promptText) => {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
-  const model = process.env.DEEPSEEK_MODEL || 'deepseek-reasoner';
-  const apiUrl = 'https://api.deepseek.com/chat/completions';
+const callOpenAIAPI = async (promptText) => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+  const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
   if (!apiKey) {
-    throw new Error('DEEPSEEK_API_KEY is not defined in environment variables.');
+    throw new Error('OPENAI_API_KEY is not defined in environment variables.');
   }
 
+/*
   const payload = {
     model: model,
     messages: [
       { role: 'user', content: promptText }
     ],
     temperature: 0.7,
-    // response_format: { type: "json_object" } // Optional, better to rely on prompt enforcement for now as advised
+  };
+*/
+
+  const payload = {
+    model: model,
+    messages: [
+      { 
+        role: 'system', 
+        content: `Eres un Chef Ejecutivo experto. Genera recetas detalladas en JSON.
+        REGLAS DE ESTILO:
+        - Las descripciones deben ser largas, apetitosas y detalladas.
+        - Los pasos de preparación deben ser explicativos, no te limites a frases cortas.
+        - Queremos calidad y profundidad en el contenido culinario.
+        NO uses markdown, solo JSON crudo.`
+      },
+      { 
+        role: 'user', 
+        content: promptText 
+      }
+    ],
+    temperature: 0.3, // Más bajo = Menos alucinaciones y formato más estable
+    max_tokens: 10000, // Espacio de sobra para 8-10 recetas (gpt-4o-mini soporta hasta 16k de salida)
+    response_format: { type: "json_object" } // FUERZA a la IA a devolver JSON válido
   };
 
   try {
     // Debugging Logs
-    console.log('--- [DEBUG] DeepSeek Request Info ---');
+    console.log('--- [DEBUG] OpenAI Request Info ---');
     console.log('Model:', model);
     
     // Mask API Key for logging
@@ -28,17 +51,17 @@ const callDeepSeekAPI = async (promptText) => {
       `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` : 
       'UNDEFINED';
     console.log('API Key (Masked):', maskedKey);
-    console.log('Full Prompt:', JSON.stringify(payload.messages, null, 2));
-    console.log('-------------------------------------');
+    console.log('Prompt Length:', promptText.length);
+    console.log('-----------------------------------');
 
-    console.log(`[DeepSeek Service] Calling API with model: ${model}...`);
+    console.log(`[OpenAI Service] Calling API with model: ${model}...`);
     
     const response = await axios.post(apiUrl, payload, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
-      timeout: 360000 // 360 seconds timeout (6 mins)
+      timeout: 300000 // 5 minutos timeout
     });
 
     const content = response.data.choices[0].message.content;
@@ -69,13 +92,13 @@ const callDeepSeekAPI = async (promptText) => {
       const parsedData = JSON.parse(jsonString);
       return parsedData;
     } catch (parseError) {
-      console.error('[DeepSeek Service] Failed to parse JSON response:', content);
-      throw new Error('Invalid JSON received from DeepSeek API');
+      console.error('[OpenAI Service] Failed to parse JSON response:', content);
+      throw new Error('Invalid JSON received from OpenAI API');
     }
 
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('[DeepSeek Service] Axios Error:', error.message);
+      console.error('[OpenAI Service] Axios Error:', error.message);
       if (error.response) {
         console.error('Response Status:', error.response.status);
         console.error('Response Data:', error.response.data);
@@ -83,12 +106,12 @@ const callDeepSeekAPI = async (promptText) => {
         console.error('No response received (Timeout?)');
       }
     } else {
-      console.error('[DeepSeek Service] Unknown Error:', error);
+      console.error('[OpenAI Service] Unknown Error:', error);
     }
     throw error;
   }
 };
 
 module.exports = {
-  callDeepSeekAPI
+  callOpenAIAPI
 };

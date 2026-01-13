@@ -143,7 +143,7 @@ services:
       NODE_ENV: production
       PORT: 4000
       DATABASE_URL: postgres://${DB_USER}:${DB_PASS}@db:5432/${DB_NAME}
-      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
       APP_USER: ${APP_USER}
       APP_PASSWORD: ${APP_PASSWORD}
     networks:
@@ -191,7 +191,7 @@ DB_PASS=postgres_password
 DB_NAME=sacc_db
 
 # Inteligencia Artificial
-DEEPSEEK_API_KEY=sk-tukeydeepseekaqui
+OPENAI_API_KEY=sk-tuapikeyopenai
 ```
 
 ## 8.5 Instrucciones de Ejecución
