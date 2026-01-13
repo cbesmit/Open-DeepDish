@@ -6,34 +6,34 @@ import usePersonasStore from '../../store/personasStore';
 import FeedbackModule from './FeedbackModule';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
+import Modal from '../ui/Modal';
 import { 
     ClockIcon, 
     FireIcon, 
     CheckCircleIcon, 
     ShoppingCartIcon, 
-    BookmarkSquareIcon 
+    BookmarkSquareIcon,
+    TrashIcon,
+    ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { cn } from '../../utils/cn';
 
 export default function RecetaDetalle({ receta, modo = 'lectura' }) {
   // modo: 'lectura' (guardada) | 'preliminar' (generador)
   const navigate = useNavigate();
-  const { guardarGenerada } = useRecetasStore();
+  const { guardarGenerada, eliminarReceta } = useRecetasStore();
   const { config } = useGeneradorStore();
   const { personas } = usePersonasStore();
   
   const [checkedPasos, setCheckedPasos] = useState({});
   const [checkedIngredientes, setCheckedIngredientes] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   if (!receta) return null;
 
-  // Normalizar estructura de datos (la API retorna algo diferente a la generación a veces)
-  // Asumimos que receta trae: nombre, descripcion, contenido_full (ingredientes, pasos, tips), tiempo_estimado, calorias, etc.
-  // Si viene de DB, el contenido JSON está en 'contenido'. Si viene del generador, está plano o en contenido_full.
-  
   const detalles = receta.contenido || receta.contenido_full || receta; 
-  // Intentamos extraer arrays seguros
   const ingredientes = detalles.ingredientes || [];
   const pasos = detalles.pasos || [];
   const tips = detalles.tips || [];
@@ -41,29 +41,42 @@ export default function RecetaDetalle({ receta, modo = 'lectura' }) {
   const handleGuardar = async () => {
     setIsSaving(true);
     try {
-        // Preparar payload para backend
         const payload = {
-            titulo: receta.titulo || receta.nombre, // Backend espera titulo
+            titulo: receta.titulo || receta.nombre,
             descripcion: receta.descripcion,
-            tipo_comida: config.tipo_comida || 'Comida', // Usar config si no viene en receta
+            tipo_comida: config.tipo_comida || 'Comida',
             tiempo_preparacion: receta.tiempo_estimado || config.tiempo_prep,
             nivel_saludable: receta.nivel_saludable_calculado || config.nivel_saludable || 3,
+            dificultad: config.tiempo_prep || 'NORMAL',
+            objetivo_agrado: config.nivel_agrado || 'MAYORIA',
+            tipo_cocina: config.tipo_cocina || 'Mexicana',
             contenido_full: detalles,
-            config_snapshot: config, // config del store generador
+            config_snapshot: config,
         };
         
         const nueva = await guardarGenerada(payload);
-        // Navegar con estado para saber que venimos del generador
         navigate(`/recetas/${nueva.id}`, { 
             replace: true, 
             state: { fromGenerator: true } 
         });
     } catch (e) {
         console.error(e);
-        // Error manejado en store
     } finally {
         setIsSaving(false);
     }
+  };
+
+  const handleConfirmDelete = async () => {
+      setIsDeleting(true);
+      try {
+          await eliminarReceta(receta.id);
+          navigate('/recetas');
+      } catch (e) {
+          console.error(e);
+          alert('Error al eliminar receta');
+          setIsDeleting(false);
+          setShowDeleteModal(false);
+      }
   };
 
   const togglePaso = (idx) => {
@@ -77,12 +90,26 @@ export default function RecetaDetalle({ receta, modo = 'lectura' }) {
   return (
     <div className="max-w-4xl mx-auto pb-24 animate-fadeIn">
       {/* HEADER */}
-      <div className="mb-8">
-         <div className="flex flex-wrap gap-2 mb-3">
-             <Badge className="bg-orange-100 text-orange-800">{receta.tipo_cocina || 'General'}</Badge>
-             <Badge variant="outline" className="flex items-center gap-1"><ClockIcon className="h-3 w-3"/> {receta.tiempo_estimado || config.tiempo_prep}</Badge>
-             <Badge variant="outline" className="flex items-center gap-1"><FireIcon className="h-3 w-3"/> Salud: {receta.nivel_saludable_calculado || config.nivel_saludable}/5</Badge>
+      <div className="mb-8 relative">
+         <div className="flex justify-between items-start">
+             <div className="flex flex-wrap gap-2 mb-3">
+                 <Badge className="bg-orange-100 text-orange-800">{receta.tipo_cocina || 'General'}</Badge>
+                 <Badge variant="outline" className="flex items-center gap-1"><ClockIcon className="h-3 w-3"/> {receta.tiempo_estimado || config.tiempo_prep}</Badge>
+                 <Badge variant="outline" className="flex items-center gap-1"><FireIcon className="h-3 w-3"/> Salud: {receta.nivel_saludable_calculado || config.nivel_saludable || receta.nivel_saludable}/5</Badge>
+             </div>
+             
+             {modo === 'lectura' && (
+                 <Button 
+                    variant="outline" 
+                    className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                    onClick={() => setShowDeleteModal(true)}
+                    icon={TrashIcon}
+                 >
+                     Borrar Receta
+                 </Button>
+             )}
          </div>
+
          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">{receta.titulo || receta.nombre}</h1>
          <p className="text-lg text-gray-600 leading-relaxed">{receta.descripcion}</p>
       </div>
@@ -109,7 +136,6 @@ export default function RecetaDetalle({ receta, modo = 'lectura' }) {
                   <ul className="space-y-3">
                       {ingredientes.map((ing, idx) => {
                           const isChecked = checkedIngredientes[idx];
-                          // Lógica de semáforo
                           const statusIcon = ing.estado === 'tienes' 
                             ? <CheckCircleIcon className="h-5 w-5 text-green-500 flex-shrink-0" />
                             : <ShoppingCartIcon className="h-5 w-5 text-orange-500 flex-shrink-0" />;
@@ -195,6 +221,42 @@ export default function RecetaDetalle({ receta, modo = 'lectura' }) {
               )}
           </div>
       </div>
+
+      {/* DELETE MODAL */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => !isDeleting && setShowDeleteModal(false)}
+        title="Confirmar Eliminación"
+        footer={
+            <>
+                <Button 
+                    variant="ghost" 
+                    onClick={() => setShowDeleteModal(false)}
+                    disabled={isDeleting}
+                >
+                    Cancelar
+                </Button>
+                <Button 
+                    variant="primary" 
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                    onClick={handleConfirmDelete}
+                    isLoading={isDeleting}
+                >
+                    Eliminar Permanentemente
+                </Button>
+            </>
+        }
+      >
+          <div className="flex items-start gap-4">
+              <div className="p-3 bg-red-100 rounded-full flex-shrink-0">
+                  <ExclamationTriangleIcon className="h-6 w-6 text-red-600" />
+              </div>
+              <div>
+                  <p className="text-gray-700 font-medium mb-2">¿Estás seguro de que deseas eliminar "{receta.titulo || receta.nombre}"?</p>
+                  <p className="text-sm text-gray-500">Esta acción no se puede deshacer y perderás el historial de calificaciones de esta receta.</p>
+              </div>
+          </div>
+      </Modal>
     </div>
   );
 }

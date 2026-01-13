@@ -8,6 +8,9 @@ const guardarRecetaSchema = z.object({
   descripcion: z.string().min(1, "Descripción es requerida"),
   tipo_comida: z.string().min(1, "Tipo de comida es requerido"),
   tiempo_preparacion: z.string().min(1, "Tiempo de preparación es requerido"),
+  dificultad: z.string().optional(),
+  objetivo_agrado: z.string().optional(),
+  tipo_cocina: z.string().optional(),
   nivel_saludable: z.number().int().min(1).max(5),
   contenido_full: z.any().refine(val => val && typeof val === 'object' && !Array.isArray(val), {
     message: "contenido_full debe ser un objeto JSON"

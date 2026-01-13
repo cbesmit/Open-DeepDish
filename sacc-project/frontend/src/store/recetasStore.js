@@ -6,9 +6,14 @@ const useRecetasStore = create((set, get) => ({
   recetaActiva: null,
   filtros: {
     q: '',
-    nivel_saludable: 0,
+    min_salud: 1,
+    max_salud: 5,
     tiempo: '',
-    persona_id: ''
+    persona_id: '',
+    tipo_comida: '',
+    dificultad: '',
+    objetivo_agrado: '',
+    tipo_cocina: ''
   },
   pagination: {
     page: 1,
@@ -33,8 +38,8 @@ const useRecetasStore = create((set, get) => ({
         recetas: data.data || [], 
         pagination: {
             ...pagination,
-            total: data.meta?.total || 0,
-            totalPages: data.meta?.totalPages || 1
+            total: data.total || 0,
+            totalPages: data.totalPages || 1
         },
         isLoading: false 
       });
@@ -76,7 +81,6 @@ const useRecetasStore = create((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const nuevaReceta = await recetasService.guardarReceta(recetaData);
-      // Podríamos actualizar el cache o simplemente retornar la nueva receta
       set({ isLoading: false });
       return nuevaReceta;
     } catch (error) {
@@ -85,10 +89,24 @@ const useRecetasStore = create((set, get) => ({
     }
   },
 
+  eliminarReceta: async (id) => {
+    set({ isLoading: true });
+    try {
+      await recetasService.deleteReceta(id);
+      set({ isLoading: false });
+      const { recetas } = get();
+      if (recetas.find(r => r.id === id)) {
+         get().fetchRecetas();
+      }
+    } catch (error) {
+      set({ isLoading: false, error: error.message || 'Error al eliminar receta' });
+      throw error;
+    }
+  },
+
   enviarCalificacion: async (id, calificaciones) => {
     try {
       await recetasService.calificarReceta(id, calificaciones);
-      // Re-fetch para asegurar data completa y evitar estados vacíos
       const updated = await recetasService.getRecetaById(id);
       set({ recetaActiva: updated });
       return updated;

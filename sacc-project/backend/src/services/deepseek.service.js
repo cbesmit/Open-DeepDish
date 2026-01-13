@@ -38,7 +38,7 @@ const callDeepSeekAPI = async (promptText) => {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
-      timeout: 300000 // 300 seconds timeout (5 mins) for DeepSeek Reasoner
+      timeout: 360000 // 360 seconds timeout (6 mins)
     });
 
     const content = response.data.choices[0].message.content;

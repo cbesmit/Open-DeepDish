@@ -34,6 +34,9 @@ model RecetaGuardada {
   tipo_comida       String
   nivel_saludable   Int
   tiempo_preparacion String
+  dificultad        String?
+  objetivo_agrado   String?
+  tipo_cocina       String?
   contenido_full    Json
   config_snapshot   Json
   fecha_guardado    DateTime       @default(now())

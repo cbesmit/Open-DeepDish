@@ -18,7 +18,7 @@ export default function FeedbackModule({ recetaId, calificacionesIniciales = [],
   const [calificaciones, setCalificaciones] = useState(() => {
     const initialMap = {};
     personas.forEach(p => {
-        const existing = calificacionesIniciales.find(c => c.persona_id === p.id);
+        const existing = calificacionesIniciales.find(c => (c.personaId || c.persona_id) === p.id);
         initialMap[p.id] = existing ? mapIncomingRating(existing.valoracion) : null;
     });
     return initialMap;
@@ -28,7 +28,7 @@ export default function FeedbackModule({ recetaId, calificacionesIniciales = [],
   React.useEffect(() => {
     const newMap = {};
     personas.forEach(p => {
-        const existing = calificacionesIniciales.find(c => c.persona_id === p.id);
+        const existing = calificacionesIniciales.find(c => (c.personaId || c.persona_id) === p.id);
         newMap[p.id] = existing ? mapIncomingRating(existing.valoracion) : null;
     });
     setCalificaciones(newMap);
@@ -134,7 +134,7 @@ export default function FeedbackModule({ recetaId, calificacionesIniciales = [],
             className="w-full"
             variant={hasChanges ? 'primary' : 'outline'}
         >
-            {hasChanges ? 'Guardar Calificaciones' : 'Calificaciones al día'}
+            {hasChanges ? 'Guardar Calificaciones' : 'Guardar'}
         </Button>
       </div>
     </div>
