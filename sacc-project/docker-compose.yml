@@ -11,7 +11,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      # CAMBIO: Usar carpeta local para persistencia
+      - ./postgres_data:/var/lib/postgresql/data
     networks:
       - sacc-network
     healthcheck:
@@ -19,7 +20,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    # No exponemos puerto 5432 al host por seguridad
 
   # --- Backend (API & IA Controller) ---
   backend:
@@ -30,30 +30,38 @@ services:
       db:
         condition: service_healthy
     environment:
-      NODE_ENV: production
+      NODE_ENV: development # CAMBIO: Development
       PORT: 4000
       DATABASE_URL: postgres://${DB_USER}:${DB_PASS}@db:5432/${DB_NAME}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
-      APP_USER: ${APP_USER}
-      APP_PASSWORD: ${APP_PASSWORD}
+    volumes:
+      # CAMBIO: Mapear código local para Hot Reload
+      - ./backend:/app
+      # IMPORTANTE: Preservar node_modules del contenedor
+      - /app/node_modules
+    # CAMBIO: Sincronizar BD automáticamente al iniciar y luego correr el server
+    command: sh -c "npx prisma db push && npm run dev"
     networks:
       - sacc-network
-    # Healthcheck opcional para asegurar que DB está lista antes de arrancar
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h db -U ${DB_USER}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
-  # --- Frontend (Web Server & Gateway) ---
+  # --- Frontend (Web Server) ---
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      target: base # CAMBIO: Usar etapa base (Node) en lugar de Nginx
     container_name: sacc_frontend
     restart: always
     depends_on:
       - backend
     ports:
-      - "${APP_PORT}:80" # El ÚNICO puerto expuesto (ej. 3000 -> 80)
+      - "${APP_PORT}:5173" # CAMBIO: Puerto de Vite por defecto
+    volumes:
+      # CAMBIO: Mapear código local para Hot Reload
+      - ./frontend:/app
+      # IMPORTANTE: Preservar node_modules del contenedor
+      - /app/node_modules
+    # CAMBIO: Usar Vite Server
+    command: npm run dev -- --host
     networks:
       - sacc-network
 

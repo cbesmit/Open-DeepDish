@@ -1,12 +1,15 @@
-# Etapa 1: Build
-FROM node:20-alpine as build
+# Etapa 1: Base (Node + Dependencias)
+FROM node:20-alpine as base
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+
+# Etapa 2: Build (Para Producción)
+FROM base as build
 RUN npm run build
 
-# Etapa 2: Servidor Producción & Proxy
+# Etapa 3: Servidor Producción & Proxy
 FROM nginx:alpine
 # Copiar el build de React a la carpeta de Nginx
 COPY --from=build /app/dist /usr/share/nginx/html

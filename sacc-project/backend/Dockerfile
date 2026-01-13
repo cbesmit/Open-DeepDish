@@ -7,7 +7,7 @@ RUN apk add --no-cache openssl
 
 # Instalar dependencias
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 
 # Copiar código fuente (y prisma schema si aplica)
 COPY . .
