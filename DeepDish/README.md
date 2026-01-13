@@ -38,23 +38,41 @@ DeepDish es una aplicación para la generación y gestión de recetas de cocina,
     APP_PORT=3000
     ```
 
-## Ejecución (Docker Compose)
+## Entornos de Ejecución
 
-La forma más sencilla de levantar el proyecto es utilizando Docker Compose.
+El proyecto está configurado para ejecutarse en dos modos diferentes:
 
-1.  **Levantar los servicios:**
-    ```bash
-    docker-compose up --build
-    ```
-    Este comando construirá las imágenes del backend y frontend, y levantará la base de datos.
-    
-    - El **Frontend** estará disponible en: `http://localhost:3000` (o el puerto que hayas definido en `APP_PORT`).
-    - El **Backend** estará disponible internamente en el puerto 4000.
+### 1. Entorno de Desarrollo (Local)
+Ideal para programar. Incluye "Hot Reload" (los cambios en el código se reflejan inmediatamente) y logs detallados.
 
-2.  **Detener los servicios:**
-    ```bash
-    docker-compose down
-    ```
+```bash
+docker compose up
+```
+
+- **Frontend:** Usa Vite Dev Server (puerto `APP_PORT` mapeado al 5173 interno).
+- **Backend:** Usa Nodemon para reinicio automático.
+- **Volúmenes:** El código local está sincronizado con el contenedor.
+
+### 2. Entorno de Producción (VPS / Servidor)
+Optimizado para rendimiento y seguridad. Usa Nginx para servir el frontend compilado y el backend en modo producción.
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+- **Frontend:** Archivos estáticos optimizados servidos por Nginx interno.
+- **Backend:** Ejecución optimizada sin watchers innecesarios.
+- **Nota:** No incluye "Hot Reload". Cualquier cambio requiere reconstruir los contenedores con `--build`.
+- **Puerto:** La aplicación completa se sirve en el puerto definido en `APP_PORT`.
+
+## Comandos Útiles
+
+- **Detener servicios:**
+  ```bash
+  docker compose down
+  # O si usaste producción:
+  docker compose -f docker-compose.prod.yml down
+  ```
 
 ## Estructura del Proyecto
 
