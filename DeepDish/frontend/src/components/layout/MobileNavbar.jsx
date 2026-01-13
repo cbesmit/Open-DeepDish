@@ -29,7 +29,7 @@ export default function MobileNavbar() {
             <div className="h-8 w-8 bg-brand-600 rounded-lg flex items-center justify-center mr-3">
                 <span className="text-white font-bold text-lg">S</span>
             </div>
-            <span className="font-bold text-gray-900 text-lg">SACC Chef</span>
+            <span className="font-bold text-gray-900 text-lg">DeepDish</span>
         </div>
         <button
           onClick={() => setIsOpen(!isOpen)}

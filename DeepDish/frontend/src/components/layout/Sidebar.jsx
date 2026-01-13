@@ -27,8 +27,7 @@ export default function Sidebar() {
         <div className="h-8 w-8 bg-brand-600 rounded-lg flex items-center justify-center mr-3">
             <span className="text-white font-bold text-xl">S</span>
         </div>
-        <span className="text-xl font-bold text-gray-900 tracking-tight">SACC Chef</span>
-      </div>
+                  <span className="text-xl font-bold text-gray-900 tracking-tight">DeepDish</span>      </div>
 
       {/* Nav Links */}
       <nav className="flex-1 px-4 py-6 space-y-1">

@@ -1,88 +1,64 @@
-# 🍕 DeepDish
+# DeepDish
 
-**DeepDish** (anteriormente SACC) es un asistente culinario impulsado por Inteligencia Artificial diseñado para resolver el dilema diario: *¿Qué vamos a comer hoy?*.
+DeepDish es una aplicación para la generación y gestión de recetas de cocina, impulsada por inteligencia artificial.
 
-A diferencia de los generadores de recetas genéricos, DeepDish considera los **gustos específicos (qué les gusta y qué no)** de cada miembro de la familia, los ingredientes disponibles en tu **despensa** y tus restricciones actuales (tiempo, salud, tipo de cocina).
+## Stack Tecnológico
 
-Utilizando **DeepSeek Reasoner (R1)**, genera recetas que buscan el "Consenso Total" — minimizando las quejas y maximizando la satisfacción de todos los comensales.
+- **Frontend:** React, Vite, Tailwind CSS, Zustand
+- **Backend:** Node.js, Express, Prisma ORM
+- **Base de Datos:** PostgreSQL
+- **IA:** DeepSeek API
 
-## 🚀 Características
+## Requisitos Previos
 
-- **👥 Gestión de Perfiles:** Crea perfiles para miembros de la familia con sus gustos, disgustos y alergias específicos.
-- **🧠 Motor de Consenso IA:** Genera recetas que satisfacen a múltiples personas seleccionadas simultáneamente.
-- **🥑 Prioridad a la Despensa:** Prioriza el uso de ingredientes que ya tienes en casa para reducir el desperdicio.
-- **🔍 Filtrado Avanzado:**
-  - **Nivel Saludable (1-5):** Filtra por rangos de salud (desde comida reconfortante hasta fitness).
-  - **Tiempo/Dificultad:** Rápida (30m), Normal (60m) o Elaborada.
-  - **Tipo de Cocina:** Mexicana, Italiana, Japonesa, etc.
-  - **Momento del Día:** Desayuno, Comida o Cena.
-- **💾 Historial de Recetas:** Guarda tus creaciones favoritas generadas por la IA.
-- **📊 Dashboard:** Vista rápida de la actividad reciente y acceso directo al generador.
-- **🐳 Dockerizado:** Configurado para un entorno de desarrollo moderno con Hot Reload.
+- Docker y Docker Compose instalados en tu sistema.
+- Una API Key de DeepSeek (para la generación de recetas).
 
-## 🛠️ Stack Tecnológico
+## Configuración
 
-- **Frontend:** React (Vite), Tailwind CSS, Zustand (Gestión de estado), Heroicons.
-- **Backend:** Node.js, Express.js.
-- **Base de Datos:** PostgreSQL (vía Prisma ORM).
-- **IA:** DeepSeek API (Modelo Reasoner).
-- **Infraestructura:** Docker & Docker Compose.
-
-## 📦 Prerrequisitos
-
-- Docker y Docker Compose instalados.
-- Una [API Key de DeepSeek](https://platform.deepseek.com/).
-
-## ⚡ Inicio Rápido
-
-1.  **Clonar el repositorio:**
+1.  **Clonar el repositorio** (si no lo has hecho aún):
     ```bash
-    git clone https://github.com/tu-usuario/DeepDish.git
+    git clone <url-del-repositorio>
     cd DeepDish
     ```
 
-2.  **Configuración del entorno:**
-    Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
+2.  **Variables de Entorno:**
+    Crea un archivo `.env` en la raíz del proyecto (al mismo nivel que `docker-compose.yml`). Puedes usar el siguiente ejemplo:
 
     ```env
-    # Configuración de App
-    APP_PORT=3000
-    NODE_ENV=development
-
-    # Base de Datos
+    # Configuración de Base de Datos
     DB_USER=postgres
-    DB_PASS=tu_password_seguro
-    DB_NAME=sacc_db
+    DB_PASS=tu_password_secreto
+    DB_NAME=deepdish_db
 
-    # Servicio de IA
-    DEEPSEEK_API_KEY=sk-tu-api-key-aqui
-    DEEPSEEK_MODEL=deepseek-reasoner
+    # Configuración del Backend
+    DEEPSEEK_API_KEY=tu_api_key_de_deepseek
+
+    # Configuración del Frontend
+    APP_PORT=3000
     ```
 
-3.  **Lanzar con Docker:**
+## Ejecución (Docker Compose)
+
+La forma más sencilla de levantar el proyecto es utilizando Docker Compose.
+
+1.  **Levantar los servicios:**
     ```bash
-    docker compose up -d --build
+    docker-compose up --build
     ```
-    *Nota: La primera vez tardará unos minutos en construir las imágenes e instalar las dependencias.*
+    Este comando construirá las imágenes del backend y frontend, y levantará la base de datos.
+    
+    - El **Frontend** estará disponible en: `http://localhost:3000` (o el puerto que hayas definido en `APP_PORT`).
+    - El **Backend** estará disponible internamente en el puerto 4000.
 
-4.  **Acceder a la Aplicación:**
-    Abre tu navegador en: `http://localhost:3000`
+2.  **Detener los servicios:**
+    ```bash
+    docker-compose down
+    ```
 
-## 🏗️ Flujo de Desarrollo
+## Estructura del Proyecto
 
-El proyecto está configurado para **Hot Reloading**:
-- **Frontend:** Los cambios en `./frontend/src` se reflejan instantáneamente.
-- **Backend:** Los cambios en `./backend/src` reinician el servidor automáticamente (vía Nodemon).
-- **Base de Datos:** Los datos se persisten en la carpeta local `./postgres_data`.
-- **Migraciones:** La base de datos se sincroniza automáticamente al iniciar el contenedor mediante `prisma db push`.
-
-## 🗄️ Gestión de Base de Datos
-
-Si necesitas sincronizar la base de datos manualmente:
-```bash
-docker compose exec backend npx prisma db push
-```
-
-## 📝 Licencia
-
-Este proyecto es de código abierto.
+- `/backend`: API RESTful con Express y Prisma.
+- `/frontend`: Aplicación SPA con React y Vite.
+- `/postgres_data`: Persistencia de datos de PostgreSQL (se crea automáticamente).
+- `docker-compose.yml`: Orquestación de contenedores.

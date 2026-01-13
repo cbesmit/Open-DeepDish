@@ -52,7 +52,7 @@ export default function LoginPage() {
             <div className="mx-auto bg-brand-50 w-16 h-16 rounded-full flex items-center justify-center mb-4 text-brand-600 ring-4 ring-brand-50/50">
                 <LockClosedIcon className="h-8 w-8" />
             </div>
-            <CardTitle className="text-2xl text-gray-900">Bienvenido a SACC</CardTitle>
+            <CardTitle className="text-2xl text-gray-900">Bienvenido a DeepDish</CardTitle>
             <p className="text-gray-500 mt-2 text-sm">Sistema de Asistencia Culinaria Contextual</p>
         </CardHeader>
         <CardContent className="pt-2">

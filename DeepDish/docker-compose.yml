@@ -4,7 +4,7 @@ services:
   # --- Base de Datos ---
   db:
     image: postgres:15-alpine
-    container_name: sacc_db
+    container_name: deepdish_db
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -14,7 +14,7 @@ services:
       # CAMBIO: Usar carpeta local para persistencia
       - ./postgres_data:/var/lib/postgresql/data
     networks:
-      - sacc-network
+      - deepdish-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 5s
@@ -24,7 +24,7 @@ services:
   # --- Backend (API & IA Controller) ---
   backend:
     build: ./backend
-    container_name: sacc_backend
+    container_name: deepdish_backend
     restart: always
     depends_on:
       db:
@@ -42,14 +42,14 @@ services:
     # CAMBIO: Sincronizar BD automáticamente al iniciar y luego correr el server
     command: sh -c "npx prisma db push && npm run dev"
     networks:
-      - sacc-network
+      - deepdish-network
 
   # --- Frontend (Web Server) ---
   frontend:
     build: 
       context: ./frontend
       target: base # CAMBIO: Usar etapa base (Node) en lugar de Nginx
-    container_name: sacc_frontend
+    container_name: deepdish_frontend
     restart: always
     depends_on:
       - backend
@@ -63,10 +63,10 @@ services:
     # CAMBIO: Usar Vite Server
     command: npm run dev -- --host
     networks:
-      - sacc-network
+      - deepdish-network
 
 networks:
-  sacc-network:
+  deepdish-network:
     driver: bridge
 
 volumes:
